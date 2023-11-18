@@ -4,22 +4,22 @@ const fs = require('fs');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 8080;
+const TEXT_HTML = 'text/html';
+const UTF8 = 'utf8';
+
 const buildFilePath = (filename) => path.join(__dirname, 'public', filename);
 
-const server = http.createServer((req, res) => {
-  // default content type
-  const contentType = 'text/html';
-  
+const server = http.createServer((req, res) => {  
   // read the file
   fs.readFile(
-    buildFilePath(req.url === '/' ? 'index.html' : req.url),
+    buildFilePath(`${req.url === '/' ? 'index' : req.url}.html`),
     (err, content) => {
       if (err) {
         if (err.code === 'ENOENT') {
           // page not found
           fs.readFile(buildFilePath('404.html'), (err, content) => {
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(content, 'utf8');
+            res.writeHead(200, { 'Content-Type': TEXT_HTML });
+            res.end(content, UTF8);
           });
         } else {
           // internal server error
@@ -30,8 +30,8 @@ const server = http.createServer((req, res) => {
       }
 
       // ok
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(content, 'utf8');
+      res.writeHead(200, { 'Content-Type': TEXT_HTML });
+      res.end(content, UTF8);
     }
   );
 });
